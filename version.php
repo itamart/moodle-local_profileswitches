@@ -26,3 +26,4 @@ defined('MOODLE_INTERNAL') or die;
 $plugin->component = 'local_profileswitches';
 $plugin->version  = 2012041700;
 $plugin->requires = 2010112400;
+$plugin->maturity = MATURITY_STABLE;
