@@ -25,6 +25,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') or die;
+
 require_once('../../config.php');
 
 $id = required_param('id', PARAM_INT); // User id
