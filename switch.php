@@ -27,10 +27,11 @@
 
 require_once('../../config.php');
 
-$id = required_param('id', PARAM_INT);
+$id = required_param('id', PARAM_INT); // User id
 $returnurl = required_param('returnurl', PARAM_URL);
 
 $editor = optional_param('editor',-1, PARAM_INT);
+$ajax = optional_param('ajax',-1, PARAM_INT);
 
 $PAGE->set_url('/local/profileswitches/switch.php', array('id'=>$id));
 
@@ -46,15 +47,23 @@ require_login();
 
 $user = $USER;
 
-$systemcontext = get_system_context();
-
+$syscontext = context_system::instance();
 if (isloggedin() && !isguestuser($user) && !is_mnet_remote_user($user)) {
-    if ((is_siteadmin($user) || !is_siteadmin($user)) && has_capability('moodle/user:update', $systemcontext)) {
+    if (is_siteadmin($user) || has_capability('moodle/user:update', $syscontext)) {
 
         // Switch editor
         if ($editor != -1) {
             $DB->set_field('user', 'htmleditor', $editor, array('id' => $id));
-            $USER->htmleditor = $editor;
+            $user->htmleditor = $editor;
+        }
+
+        // Switch ajax in the era of profile ajax setting
+        if (isset($user->ajax) and $ajax != -1) {
+            $DB->set_field('user', 'ajax', $ajax, array('id' => $id));
+            $user->ajax = $ajax;
+        // Switch ajax in the new era via theme
+        } else if ($ajax != -1) {
+            set_user_preference('courseajax', $ajax);
         }
     }
 }

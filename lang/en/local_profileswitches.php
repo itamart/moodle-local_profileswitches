@@ -24,6 +24,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['ajaxoff'] = 'Turn ajax off';
+$string['ajaxon'] = 'Turn ajax on';
 $string['editoroff'] = 'Turn editor off';
 $string['editoron'] = 'Turn editor on';
 $string['pluginname'] = 'Profile switches';

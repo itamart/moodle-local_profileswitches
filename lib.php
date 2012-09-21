@@ -41,21 +41,40 @@ function local_profileswitches_extends_navigation(global_navigation $navigation)
     }
    
     $user = $USER;
-    $systemcontext = get_system_context();
+    $syscontext = context_system::instance();
 
     if (isloggedin() && !isguestuser($user) && !is_mnet_remote_user($user)) {
-        if ((is_siteadmin($user) || !is_siteadmin($user)) && has_capability('moodle/user:update', $systemcontext)) {
-            
-            $editor = $user->htmleditor ? 0 : 1;
-            $streditor = $editor ? 'editoron' : 'editoroff';
+        if (is_siteadmin($user) || has_capability('moodle/user:update', $syscontext)) {
             
             $switchparams = array('id' => $user->id, 'sesskey' => sesskey(), 'returnurl' => $PAGE->url->out(false));
             $switchurl = new moodle_url('/local/profileswitches/switch.php', $switchparams);
 
             // switch editor
+            $currenteditor = isset($user->htmleditor) ? $user->htmleditor : 1;
+            $editor = $currenteditor ? 0 : 1;
+            $streditor = $editor ? 'editoron' : 'editoroff';
+        
             $url = new moodle_url($switchurl, array('editor' => $editor));
             $usersetting->add(get_string($streditor, 'local_profileswitches'), $url, $usersetting::TYPE_SETTING);
+            
+            // switch course ajax in the era of profile ajax setting
+            if (isset($user->ajax)) {
+                $currentajax = $user->ajax;
+            } else {
+                $currentajax = get_user_preferences('courseajax', 1);
+
+                // Apply in course via the theme setting
+                $courseid = !empty($PAGE->course->id) ? $PAGE->course->id : 0;
+                if ($courseid) {
+                    $PAGE->theme->enablecourseajax = $currentajax;
+                }
+            }
+                
+            $ajax = $currentajax ? 0 : 1;
+            $strajax = $ajax ? 'ajaxon' : 'ajaxoff';
+
+            $url = new moodle_url($switchurl, array('ajax' => $ajax));
+            $usersetting->add(get_string($strajax, 'local_profileswitches'), $url, $usersetting::TYPE_SETTING);
         }
     }
-
 }
