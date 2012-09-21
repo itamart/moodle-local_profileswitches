@@ -26,8 +26,7 @@ defined('MOODLE_INTERNAL') or die;
 /**
  * Adds module specific settings to the settings block
  *
- * @param settings_navigation $settings The settings navigation object
- * @param navigation_node $datanode The node to add module settings to
+ * @param global_navigation $navigation The global navigation object
  */
 function local_profileswitches_extends_navigation(global_navigation $navigation) {
     global $PAGE, $USER;
@@ -41,7 +40,7 @@ function local_profileswitches_extends_navigation(global_navigation $navigation)
     }
    
     $user = $USER;
-    $syscontext = context_system::instance();
+    $syscontext = get_system_context();
 
     if (isloggedin() && !isguestuser($user) && !is_mnet_remote_user($user)) {
         if (is_siteadmin($user) || has_capability('moodle/user:update', $syscontext)) {
@@ -77,4 +76,11 @@ function local_profileswitches_extends_navigation(global_navigation $navigation)
             $usersetting->add(get_string($strajax, 'local_profileswitches'), $url, $usersetting::TYPE_SETTING);
         }
     }
+}
+
+/**
+ * Pre 2.3 function name format
+ */
+function profileswitches_extends_navigation(global_navigation $navigation) {
+    local_profileswitches_extends_navigation($navigation);
 }

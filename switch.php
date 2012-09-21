@@ -25,8 +25,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') or die;
-
 require_once('../../config.php');
 
 $id = required_param('id', PARAM_INT); // User id
@@ -49,7 +47,7 @@ require_login();
 
 $user = $USER;
 
-$syscontext = context_system::instance();
+$syscontext = get_system_context();
 if (isloggedin() && !isguestuser($user) && !is_mnet_remote_user($user)) {
     if (is_siteadmin($user) || has_capability('moodle/user:update', $syscontext)) {
 
