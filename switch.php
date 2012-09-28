@@ -49,7 +49,7 @@ $user = $USER;
 
 $syscontext = get_system_context();
 if (isloggedin() && !isguestuser($user) && !is_mnet_remote_user($user)) {
-    if (is_siteadmin($user) || has_capability('moodle/user:update', $syscontext)) {
+    if (is_siteadmin($user) || has_capability('moodle/user:editownprofile', $syscontext)) {
 
         // Switch editor
         if ($editor != -1) {

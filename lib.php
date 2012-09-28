@@ -43,7 +43,7 @@ function local_profileswitches_extends_navigation(global_navigation $navigation)
     $syscontext = get_system_context();
 
     if (isloggedin() && !isguestuser($user) && !is_mnet_remote_user($user)) {
-        if (is_siteadmin($user) || has_capability('moodle/user:update', $syscontext)) {
+        if (is_siteadmin($user) || has_capability('moodle/user:editownprofile', $syscontext)) {
             
             $switchparams = array('id' => $user->id, 'sesskey' => sesskey(), 'returnurl' => $PAGE->url->out(false));
             $switchurl = new moodle_url('/local/profileswitches/switch.php', $switchparams);
