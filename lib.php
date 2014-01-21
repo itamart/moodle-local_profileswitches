@@ -38,13 +38,14 @@ function local_profileswitches_extends_navigation(global_navigation $navigation)
     if (empty($usersetting)) {
         return;
     }
-   
+
     $user = $USER;
-    $syscontext = get_system_context();
+    //$syscontext = get_system_context();
+    $syscontext = context_system::instance();
 
     if (isloggedin() && !isguestuser($user) && !is_mnet_remote_user($user)) {
         if (is_siteadmin($user) || has_capability('moodle/user:editownprofile', $syscontext)) {
-            
+
             $switchparams = array('id' => $user->id, 'sesskey' => sesskey(), 'returnurl' => $PAGE->url->out(false));
             $switchurl = new moodle_url('/local/profileswitches/switch.php', $switchparams);
 
@@ -52,10 +53,10 @@ function local_profileswitches_extends_navigation(global_navigation $navigation)
             $currenteditor = isset($user->htmleditor) ? $user->htmleditor : 1;
             $editor = $currenteditor ? 0 : 1;
             $streditor = $editor ? 'editoron' : 'editoroff';
-        
+
             $url = new moodle_url($switchurl, array('editor' => $editor));
             $usersetting->add(get_string($streditor, 'local_profileswitches'), $url, $usersetting::TYPE_SETTING);
-            
+
             // switch course ajax in the era of profile ajax setting
             if (isset($user->ajax)) {
                 $currentajax = $user->ajax;
@@ -68,7 +69,7 @@ function local_profileswitches_extends_navigation(global_navigation $navigation)
                     $PAGE->theme->enablecourseajax = $currentajax;
                 }
             }
-                
+
             $ajax = $currentajax ? 0 : 1;
             $strajax = $ajax ? 'ajaxon' : 'ajaxoff';
 
