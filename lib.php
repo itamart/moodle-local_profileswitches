@@ -47,16 +47,29 @@ function local_profileswitches_extends_navigation(global_navigation $navigation)
             
             $switchparams = array('id' => $user->id, 'sesskey' => sesskey(), 'returnurl' => $PAGE->url->out(false));
             $switchurl = new moodle_url('/local/profileswitches/switch.php', $switchparams);
-
+            
+            //--ucl hack begin -- 
             // switch editor
-            $currenteditor = isset($user->htmleditor) ? $user->htmleditor : 1;
-            $editor = $currenteditor ? 0 : 1;
+            //$currenteditor = isset($user->htmleditor) ? $user->htmleditor : 1;
+            if(isset($user->htmleditor)){
+                $currenteditor = $user->htmleditor;
+            }else{
+                // get 'htmleditor' preference for user
+                $currenteditor = get_user_preferences('htmleditor');
+            }
+            //-- ucl hack end --//
+            
+            //--ucl hack begin -- 
+            //$editor = $currenteditor ? 0 : 1;
+            $editor = $currenteditor ? 1 : 0;
+            //-- ucl hack end --//
+            
             $streditor = $editor ? 'editoron' : 'editoroff';
         
             $url = new moodle_url($switchurl, array('editor' => $editor));
             $usersetting->add(get_string($streditor, 'local_profileswitches'), $url, $usersetting::TYPE_SETTING);
             
-            // switch course ajax in the era of profile ajax setting
+                
             if (isset($user->ajax)) {
                 $currentajax = $user->ajax;
             } else {
@@ -68,12 +81,14 @@ function local_profileswitches_extends_navigation(global_navigation $navigation)
                     $PAGE->theme->enablecourseajax = $currentajax;
                 }
             }
+        }
                 
-            $ajax = $currentajax ? 0 : 1;
-            $strajax = $ajax ? 'ajaxon' : 'ajaxoff';
+                $ajax = $currentajax ? 0 : 1;
+                $strajax = $ajax ? 'ajaxon' : 'ajaxoff';
 
-            $url = new moodle_url($switchurl, array('ajax' => $ajax));
-            $usersetting->add(get_string($strajax, 'local_profileswitches'), $url, $usersetting::TYPE_SETTING);
+                $url = new moodle_url($switchurl, array('ajax' => $ajax));
+                $usersetting->add(get_string($strajax, 'local_profileswitches'), $url, $usersetting::TYPE_SETTING);
+            
         }
     }
 }

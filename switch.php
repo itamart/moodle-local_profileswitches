@@ -50,13 +50,29 @@ $user = $USER;
 $syscontext = get_system_context();
 if (isloggedin() && !isguestuser($user) && !is_mnet_remote_user($user)) {
     if (is_siteadmin($user) || has_capability('moodle/user:editownprofile', $syscontext)) {
-
+        
+        //-- ucl hack begin-- 
         // Switch editor
-        if ($editor != -1) {
+        /*if ($editor != -1) {
             $DB->set_field('user', 'htmleditor', $editor, array('id' => $id));
             $user->htmleditor = $editor;
+        }*/
+        
+        // 'htmleditor' userpreference is handled differently in Moodle-v2.6.2. Preference stored within mdl_user_preferences table
+        if(isset($user->htmleditor) and $editor !=-1){
+            $DB->set_field('user', 'htmleditor', $editor, array('id' => $id));
+            $user->htmleditor = $editor;
+        }else if($editor != -1){
+            if($editor == 0){
+                //set value='textarea' for htmleditor within mdl_user_preference
+                set_user_preference('htmleditor', 'textarea');
+            }else if($editor == 1){
+                //unset 'htmleditor' value
+                unset_user_preference('htmleditor');
+            }
         }
-
+        //-- ucl hack end ---//
+        
         // Switch ajax in the era of profile ajax setting
         if (isset($user->ajax) and $ajax != -1) {
             $DB->set_field('user', 'ajax', $ajax, array('id' => $id));
