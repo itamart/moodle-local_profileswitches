@@ -50,10 +50,11 @@ $user = $USER;
 if (isloggedin() && !isguestuser($user) && !is_mnet_remote_user($user)) {
     if (is_siteadmin($user) || has_capability('moodle/user:editownprofile', context_system::instance())) {
 
-        // Switch editor
-        if ($editor != -1) {
-            $DB->set_field('user', 'htmleditor', $editor, array('id' => $id));
-            $user->htmleditor = $editor;
+        // Switch editor.
+        if ($editor == 1) {
+            unset_user_preference('htmleditor');
+        } else if ($editor == 0) {
+            set_user_preference('htmleditor', 'textarea');
         }
 
         // Switch ajax in the era of profile ajax setting

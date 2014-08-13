@@ -23,6 +23,8 @@
 
 defined('MOODLE_INTERNAL') or die;
 
+define('LPS_NO_EDITOR', 'textarea');
+
 /**
  * Adds module specific settings to the settings block
  *
@@ -47,11 +49,21 @@ function local_profileswitches_extends_navigation(global_navigation $navigation)
             $switchparams = array('id' => $user->id, 'sesskey' => sesskey(), 'returnurl' => $PAGE->url->out(false));
             $switchurl = new moodle_url('/local/profileswitches/switch.php', $switchparams);
 
-            // switch editor
-            $currenteditor = isset($user->htmleditor) ? $user->htmleditor : 1;
-            $editor = $currenteditor ? 0 : 1;
-            $streditor = $editor ? 'editoron' : 'editoroff';
-        
+            // Switch editor.
+            if (isset($user->htmleditor)) {
+                $currenteditor = $user->htmleditor;
+            } else {
+                $currenteditor = get_user_preferences('htmleditor');
+            }
+
+            if ($currenteditor == LPS_NO_EDITOR) {
+                $editor = 1;
+                $streditor = 'editoron';
+            } else {
+                $editor = 0;
+                $streditor = 'editoroff';
+            }
+
             $url = new moodle_url($switchurl, array('editor' => $editor));
             $usersetting->add(get_string($streditor, 'local_profileswitches'), $url, $usersetting::TYPE_SETTING);
             
