@@ -12,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle. If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * @package    local
@@ -40,12 +40,12 @@ function local_profileswitches_extends_navigation(global_navigation $navigation)
     if (empty($usersetting)) {
         return;
     }
-   
+
     $user = $USER;
 
     if (isloggedin() && !isguestuser($user) && !is_mnet_remote_user($user)) {
         if (is_siteadmin($user) || has_capability('moodle/user:editownprofile', context_system::instance())) {
-            
+
             $switchparams = array('id' => $user->id, 'sesskey' => sesskey(), 'returnurl' => $PAGE->url->out(false));
             $switchurl = new moodle_url('/local/profileswitches/switch.php', $switchparams);
 
@@ -66,20 +66,20 @@ function local_profileswitches_extends_navigation(global_navigation $navigation)
 
             $url = new moodle_url($switchurl, array('editor' => $editor));
             $usersetting->add(get_string($streditor, 'local_profileswitches'), $url, $usersetting::TYPE_SETTING);
-            
-            // switch course ajax in the era of profile ajax setting
+
+            // Switch course ajax in the era of profile ajax setting.
             if (isset($user->ajax)) {
                 $currentajax = $user->ajax;
             } else {
                 $currentajax = get_user_preferences('courseajax', 1);
 
-                // Apply in course via the theme setting
+                // Apply in course via the theme setting.
                 $courseid = !empty($PAGE->course->id) ? $PAGE->course->id : 0;
                 if ($courseid) {
                     $PAGE->theme->enablecourseajax = $currentajax;
                 }
             }
-                
+
             $ajax = $currentajax ? 0 : 1;
             $strajax = $ajax ? 'ajaxon' : 'ajaxoff';
 
