@@ -40,10 +40,9 @@ function local_profileswitches_extends_navigation(global_navigation $navigation)
     }
    
     $user = $USER;
-    $syscontext = get_system_context();
 
     if (isloggedin() && !isguestuser($user) && !is_mnet_remote_user($user)) {
-        if (is_siteadmin($user) || has_capability('moodle/user:editownprofile', $syscontext)) {
+        if (is_siteadmin($user) || has_capability('moodle/user:editownprofile', context_system::instance())) {
             
             $switchparams = array('id' => $user->id, 'sesskey' => sesskey(), 'returnurl' => $PAGE->url->out(false));
             $switchurl = new moodle_url('/local/profileswitches/switch.php', $switchparams);
