@@ -28,19 +28,13 @@ define('LPS_NO_EDITOR', 'textarea');
 /**
  * Adds module specific settings to the settings block
  *
- * @param global_navigation $navigation The global navigation object
+ * @param object $navigation navigation node
  */
-function local_profileswitches_extends_navigation(global_navigation $navigation) {
+
+function local_profileswitches_extends_settings_navigation(settings_navigation $nav, context $context) {
     global $PAGE, $USER;
 
-    if ($settingsnav = $PAGE->__get('settingsnav')) {
-        $usersetting = $settingsnav->get('usercurrentsettings');
-    }
-
-    if (empty($usersetting)) {
-        return;
-    }
-
+    $usersetting = $nav->get('usercurrentsettings', navigation_node::TYPE_CONTAINER);
     $user = $USER;
 
     if (isloggedin() && !isguestuser($user) && !is_mnet_remote_user($user)) {
@@ -63,9 +57,9 @@ function local_profileswitches_extends_navigation(global_navigation $navigation)
                 $editor = 0;
                 $streditor = 'editoroff';
             }
-
-            $url = new moodle_url($switchurl, array('editor' => $editor));
-            $usersetting->add(get_string($streditor, 'local_profileswitches'), $url, $usersetting::TYPE_SETTING);
+            $node = $usersetting->add(get_string($streditor, 'local_profileswitches'),
+                new moodle_url($switchurl, array('editor' => $editor)),
+                navigation_node::TYPE_SETTING);
 
             // Switch course ajax in the era of profile ajax setting.
             if (isset($user->ajax)) {
@@ -84,14 +78,9 @@ function local_profileswitches_extends_navigation(global_navigation $navigation)
             $strajax = $ajax ? 'ajaxon' : 'ajaxoff';
 
             $url = new moodle_url($switchurl, array('ajax' => $ajax));
-            $usersetting->add(get_string($strajax, 'local_profileswitches'), $url, $usersetting::TYPE_SETTING);
+            $node = $usersetting->add(get_string($strajax, 'local_profileswitches'),
+                new moodle_url($switchurl, array('ajax' => $ajax)),
+                navigation_node::TYPE_SETTING);
         }
     }
-}
-
-/**
- * Pre 2.3 function name format
- */
-function profileswitches_extends_navigation(global_navigation $navigation) {
-    local_profileswitches_extends_navigation($navigation);
 }
