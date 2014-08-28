@@ -12,7 +12,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle. If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * @package    local
@@ -23,64 +23,64 @@
 
 defined('MOODLE_INTERNAL') or die;
 
+define('LPS_NO_EDITOR', 'textarea');
+
 /**
  * Adds module specific settings to the settings block
  *
- * @param global_navigation $navigation The global navigation object
+ * @param object $navigation navigation node
  */
-function local_profileswitches_extends_navigation(global_navigation $navigation) {
+
+function local_profileswitches_extends_settings_navigation(settings_navigation $nav, context $context) {
     global $PAGE, $USER;
 
-    if ($settingsnav = $PAGE->__get('settingsnav')) {
-        $usersetting = $settingsnav->get('usercurrentsettings');
-    }
-
-    if (empty($usersetting)) {
-        return;
-    }
-   
+    $usersetting = $nav->get('usercurrentsettings', navigation_node::TYPE_CONTAINER);
     $user = $USER;
-    $syscontext = get_system_context();
 
     if (isloggedin() && !isguestuser($user) && !is_mnet_remote_user($user)) {
-        if (is_siteadmin($user) || has_capability('moodle/user:editownprofile', $syscontext)) {
-            
+        if (is_siteadmin($user) || has_capability('moodle/user:editownprofile', context_system::instance())) {
+
             $switchparams = array('id' => $user->id, 'sesskey' => sesskey(), 'returnurl' => $PAGE->url->out(false));
             $switchurl = new moodle_url('/local/profileswitches/switch.php', $switchparams);
 
-            // switch editor
-            $currenteditor = isset($user->htmleditor) ? $user->htmleditor : 1;
-            $editor = $currenteditor ? 0 : 1;
-            $streditor = $editor ? 'editoron' : 'editoroff';
-        
-            $url = new moodle_url($switchurl, array('editor' => $editor));
-            $usersetting->add(get_string($streditor, 'local_profileswitches'), $url, $usersetting::TYPE_SETTING);
-            
-            // switch course ajax in the era of profile ajax setting
+            // Switch editor.
+            if (isset($user->htmleditor)) {
+                $currenteditor = $user->htmleditor;
+            } else {
+                $currenteditor = get_user_preferences('htmleditor');
+            }
+
+            if ($currenteditor == LPS_NO_EDITOR) {
+                $editor = 1;
+                $streditor = 'editoron';
+            } else {
+                $editor = 0;
+                $streditor = 'editoroff';
+            }
+            $node = $usersetting->add(get_string($streditor, 'local_profileswitches'),
+                new moodle_url($switchurl, array('editor' => $editor)),
+                navigation_node::TYPE_SETTING);
+
+            // Switch course ajax in the era of profile ajax setting.
             if (isset($user->ajax)) {
                 $currentajax = $user->ajax;
             } else {
                 $currentajax = get_user_preferences('courseajax', 1);
 
-                // Apply in course via the theme setting
+                // Apply in course via the theme setting.
                 $courseid = !empty($PAGE->course->id) ? $PAGE->course->id : 0;
                 if ($courseid) {
                     $PAGE->theme->enablecourseajax = $currentajax;
                 }
             }
-                
+
             $ajax = $currentajax ? 0 : 1;
             $strajax = $ajax ? 'ajaxon' : 'ajaxoff';
 
             $url = new moodle_url($switchurl, array('ajax' => $ajax));
-            $usersetting->add(get_string($strajax, 'local_profileswitches'), $url, $usersetting::TYPE_SETTING);
+            $node = $usersetting->add(get_string($strajax, 'local_profileswitches'),
+                new moodle_url($switchurl, array('ajax' => $ajax)),
+                navigation_node::TYPE_SETTING);
         }
     }
-}
-
-/**
- * Pre 2.3 function name format
- */
-function profileswitches_extends_navigation(global_navigation $navigation) {
-    local_profileswitches_extends_navigation($navigation);
 }

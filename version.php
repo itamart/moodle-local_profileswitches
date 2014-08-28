@@ -12,8 +12,8 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle. If not, see <http://www.gnu.org/licenses/>.
- 
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * @package    local
  * @subpackage profileswitches
@@ -23,8 +23,9 @@
 
 defined('MOODLE_INTERNAL') or die;
 
+$plugin->requires  = 2013111800;
+$plugin->version   = 2014081300;
+$plugin->cron      = 0;
 $plugin->component = 'local_profileswitches';
-$plugin->version  = 2012092101;
-$plugin->release  = '1.1.1';
-$plugin->requires = 2010112400;
-$plugin->maturity = MATURITY_STABLE;
+$plugin->maturity  = MATURITY_STABLE;
+$plugin->release   = 'v1.2.0';

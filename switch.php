@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -27,13 +26,13 @@
 
 require_once('../../config.php');
 
-$id = required_param('id', PARAM_INT); // User id
+$id = required_param('id', PARAM_INT); // User id.
 $returnurl = required_param('returnurl', PARAM_URL);
 
-$editor = optional_param('editor',-1, PARAM_INT);
-$ajax = optional_param('ajax',-1, PARAM_INT);
+$editor = optional_param('editor', -1, PARAM_INT);
+$ajax = optional_param('ajax', -1, PARAM_INT);
 
-$PAGE->set_url('/local/profileswitches/switch.php', array('id'=>$id));
+$PAGE->set_url('/local/profileswitches/switch.php', array('id' => $id));
 
 if ($USER->id != $id) {
     print_error('invaliduserid');
@@ -47,22 +46,22 @@ require_login();
 
 $user = $USER;
 
-$syscontext = get_system_context();
 if (isloggedin() && !isguestuser($user) && !is_mnet_remote_user($user)) {
-    if (is_siteadmin($user) || has_capability('moodle/user:editownprofile', $syscontext)) {
+    if (is_siteadmin($user) || has_capability('moodle/user:editownprofile', context_system::instance())) {
 
-        // Switch editor
-        if ($editor != -1) {
-            $DB->set_field('user', 'htmleditor', $editor, array('id' => $id));
-            $user->htmleditor = $editor;
+        // Switch editor.
+        if ($editor == 1) {
+            unset_user_preference('htmleditor');
+        } else if ($editor == 0) {
+            set_user_preference('htmleditor', 'textarea');
         }
 
-        // Switch ajax in the era of profile ajax setting
+        // Switch ajax in the era of profile ajax setting.
         if (isset($user->ajax) and $ajax != -1) {
             $DB->set_field('user', 'ajax', $ajax, array('id' => $id));
             $user->ajax = $ajax;
-        // Switch ajax in the new era via theme
         } else if ($ajax != -1) {
+            // Switch ajax in the new era via theme.
             set_user_preference('courseajax', $ajax);
         }
     }
