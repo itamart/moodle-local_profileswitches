@@ -40,7 +40,6 @@ function local_profileswitches_extends_navigation(global_navigation $navigation)
     }
 
     $user = $USER;
-    //$syscontext = get_system_context();
     $syscontext = context_system::instance();
 
     if (isloggedin() && !isguestuser($user) && !is_mnet_remote_user($user)) {
@@ -49,21 +48,24 @@ function local_profileswitches_extends_navigation(global_navigation $navigation)
             $switchparams = array('id' => $user->id, 'sesskey' => sesskey(), 'returnurl' => $PAGE->url->out(false));
             $switchurl = new moodle_url('/local/profileswitches/switch.php', $switchparams);
 
-            // switch editor
-            $currenteditor = isset($user->htmleditor) ? $user->htmleditor : 1;
-            $editor = $currenteditor ? 0 : 1;
+            if(isset($user->htmleditor)){
+                $currenteditor = $user->htmleditor;
+            }else{
+                $currenteditor = get_user_preferences('htmleditor');
+            }
+
+            $editor = $currenteditor ? 1 : 0;
+
             $streditor = $editor ? 'editoron' : 'editoroff';
 
             $url = new moodle_url($switchurl, array('editor' => $editor));
             $usersetting->add(get_string($streditor, 'local_profileswitches'), $url, $usersetting::TYPE_SETTING);
 
-            // switch course ajax in the era of profile ajax setting
             if (isset($user->ajax)) {
                 $currentajax = $user->ajax;
             } else {
                 $currentajax = get_user_preferences('courseajax', 1);
 
-                // Apply in course via the theme setting
                 $courseid = !empty($PAGE->course->id) ? $PAGE->course->id : 0;
                 if ($courseid) {
                     $PAGE->theme->enablecourseajax = $currentajax;
