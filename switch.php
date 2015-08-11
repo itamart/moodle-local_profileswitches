@@ -51,17 +51,20 @@ $syscontext = get_system_context();
 if (isloggedin() && !isguestuser($user) && !is_mnet_remote_user($user)) {
     if (is_siteadmin($user) || has_capability('moodle/user:editownprofile', $syscontext)) {
 
-        // Switch editor
-        if ($editor != -1) {
+        if(isset($user->htmleditor) and $editor !=-1){
             $DB->set_field('user', 'htmleditor', $editor, array('id' => $id));
             $user->htmleditor = $editor;
+        }else if($editor != -1){
+            if($editor == 0){
+                set_user_preference('htmleditor', 'textarea');
+            }else if($editor == 1){
+                unset_user_preference('htmleditor');
+            }
         }
 
-        // Switch ajax in the era of profile ajax setting
         if (isset($user->ajax) and $ajax != -1) {
             $DB->set_field('user', 'ajax', $ajax, array('id' => $id));
             $user->ajax = $ajax;
-        // Switch ajax in the new era via theme
         } else if ($ajax != -1) {
             set_user_preference('courseajax', $ajax);
         }
